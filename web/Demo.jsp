@@ -62,6 +62,6 @@
         </div>
     </div>
 </div>
-<div id="credit"><a href="https://github.com/Logan-Lin/GsnDemo">view on GitHub</a></div>
+<div id="credit"><a href="https://github.com/Logan-Lin/GsnDemo_JSP">view on GitHub</a></div>
 </body>
 </html>
