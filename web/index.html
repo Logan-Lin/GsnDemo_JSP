@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home Page</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="icon" href="icon.png">
+    <script src="jquery.js"></script>
+    <script>
+        var files = ["5059410", "5068963", "5084842", "5086733", "5086927", "5067025", "5073325"];
+
+        $(document).ready(function() {
+            var fileSelectObject = $("#file_select");
+            for (var i = 0; i < files.length; i++) {
+                fileSelectObject.append("<option value='" + files[i] + "'>" + files[i]);
+            }
+        });
+    </script>
+</head>
+<body>
+<div class="block" align="center" style="text-align: center;">
+    <form method="post" action="SelectFile.do">
+        Select Plane Type:
+        <select name="type_select">
+            <option value="6"> 6 </option>
+            <option value="9"> 9 </option>
+        </select><br>
+
+        Select File:
+        <select name="file_select" id="file_select">
+        </select><br>
+
+        <input type="submit">
+    </form>
+</div>
+</body>
+</html>
