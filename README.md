@@ -7,5 +7,9 @@
 
 ## 使用方法
 
-首先将[GsnDemo_JSP_war_exploded.zip]中的文件部署到服务器的网络应用文件夹中（例如Tomcat的webapps），访问index.html，
+首先将[GsnDemo_JSP_war_exploded](/GsnDemo_JSP_war_exploded)中的文件部署到服务器的网络应用文件夹中（例如Tomcat的webapps），访问index.html，
 点开下拉框选择机型和文件名，网页会跳转到演示页面进行展示。
+
+![](/demo/1.jpg)
+
+![](/demo/2.jpg)
