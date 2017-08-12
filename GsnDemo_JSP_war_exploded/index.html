@@ -9,6 +9,8 @@
     <script src="jquery.js"></script>
     <script>
         var files = ["5059410", "5068963", "5084842", "5086733", "5086927", "5067025", "5073325"];
+        var type6 = ["5059410", "5068963", "5084842", "5086733", "5086927"];
+        var type9 = ["5067025", "5073325"];
 
         $(document).ready(function() {
             var fileSelectObject = $("#file_select");
@@ -24,13 +26,6 @@
 </div>
 <div class="block" align="center" style="text-align: center;">
     <form method="post" action="SelectFile.do">
-        <div class="divide">
-            Select Plane Type:
-            <select name="type_select">
-                <option value="6"> 6 </option>
-                <option value="9"> 9 </option>
-            </select><br>
-        </div>
         <div class="divide">
             Select File:
             <select name="file_select" id="file_select">
