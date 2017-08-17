@@ -12,6 +12,9 @@ var allocationMatrix = [];
 
 var images = [];
 
+var selectedRelationTable;
+var graphElement;
+
 $(document).ready(function() {
     for (var i = 0; i < 28; i++) {
         images.push("pictures/pic" + String(i + 1) + ".png");
@@ -78,11 +81,11 @@ function initialSeatButtons() {
     originalSeatTable.html("");
     var firstRow = $("<tr>");
     firstRow.append("<td>O</td>");
-    for (var i = 0; i < colNum; i++) {
+    for (i = 0; i < colNum; i++) {
         firstRow.append("<td>" + colTag[i] + "</td>")
     }
     originalSeatTable.append(firstRow);
-    for (var i = 0; i < rowNum; i++) {
+    for (i = 0; i < rowNum; i++) {
         var tableRow = $("<tr>");
         tableRow.append("<td>" + rowTag[i] + "</td>");
         for (var j = 0; j < colNum; j++) {
@@ -109,8 +112,7 @@ function initialSeatButtons() {
 
 // Initialize every buttons' default class and background images.
 function initialButtons() {
-    var allocationPIDCol = allocationMatrix.map(function(value, index) {return value[0]});
-    var passengerPIDCol = passengerMatrix.map(function(value, index) {return value[0]});
+    var passengerPIDCol = passengerMatrix.map(function(value) {return value[0]});
 
     for (var i = 1; i < historyMatrix.length; i++) {
         var buttonObject = $("#original_seat").find("button[id='" +
@@ -122,9 +124,9 @@ function initialButtons() {
         }
     }
 
-    for (var i = 1; i < allocationMatrix.length; i++) {
+    for (i = 1; i < allocationMatrix.length; i++) {
         var id = getId(allocationMatrix[i][2], allocationMatrix[i][3]);
-        var buttonObject = $("#arranged_seat").find("button[id='" + id + "']");
+        buttonObject = $("#arranged_seat").find("button[id='" + id + "']");
         buttonObject.attr("class", "hasHistory").text("P");
         if (Number(passengerMatrix[passengerPIDCol.indexOf(allocationMatrix[i][0])][1]) !== 0) {
             buttonObject.addClass("hasData").attr("style", "background-image:url("
@@ -140,16 +142,16 @@ function historySeatClickHandler(e) {
     $(e.target).addClass("selected"); // Set the clicked button to selected mode.
 
     // Get the column in historyMatrix that represents seat ID.
-    var historySeatIDCol = historyMatrix.map(function(value, index) {return value[2]});
-    var historySeatPIDCol = historyMatrix.map(function(value, index) {return value[0]});
+    var historySeatIDCol = historyMatrix.map(function(value) {return value[2]});
+    var historySeatPIDCol = historyMatrix.map(function(value) {return value[0]});
     var historyRowIndex = historySeatIDCol.indexOf(selectedID);
     var selectedPid = historyMatrix[historyRowIndex][0];
 
     // Get the column in passengerMatrix that represents user ID.
-    var passengerSeatPIDCol = passengerMatrix.map(function(value, index) {return value[0]});
+    var passengerSeatPIDCol = passengerMatrix.map(function(value) {return value[0]});
     var passengerRowIndex = passengerSeatPIDCol.indexOf(selectedPid);
 
-    var allocationSeatPIDCol = allocationMatrix.map(function(value, index) {return value[0]});
+    var allocationSeatPIDCol = allocationMatrix.map(function(value) {return value[0]});
     var allocationRowIndex = allocationSeatPIDCol.indexOf(selectedPid);
 
     // Display information about the passenger on the selected seat.
@@ -169,30 +171,46 @@ function historySeatClickHandler(e) {
     }
 
     // Display the relationship information about the passenger on the selected seat and draw relation graph.
-    var relationMatrixPIDCol = relationMatrix.map(function(value, index) {return value[0]});
-    var relationRowIndexes = getAllIndexes(relationMatrixPIDCol, selectedPid);
-    var selectedRelationTable = $("#selected_passenger_relation_table");
+    var relationMatrixPIDCol1 = relationMatrix.map(function (value) {return value[0]});
+    var relationMatrixPIDCol2 = relationMatrix.map(function (value) {return value[1]});
+    var relationRowIndexes1 = getAllIndexes(relationMatrixPIDCol1, selectedPid);
+    var relationRwoIndexes2 = getAllIndexes(relationMatrixPIDCol2, selectedPid);
+    selectedRelationTable = $("#selected_passenger_relation_table");
     selectedRelationTable.html("");
 
-    var graphElement = document.getElementById("graph");
+    var relatedPersonPIDs = [];
+    for (var i = 0; i < relationRowIndexes1.length; i++) {
+        var oneRow = [];
+        oneRow.push(relationMatrix[relationRowIndexes1[i]][1]);
+        oneRow.push(relationMatrix[relationRowIndexes1[i]][2]);
+        relatedPersonPIDs.push(oneRow);
+    }
+    for (i = 0; i < relationRwoIndexes2.length; i++) {
+        oneRow = [];
+        oneRow.push(relationMatrix[relationRwoIndexes2[i]][0]);
+        oneRow.push(relationMatrix[relationRwoIndexes2[i]][2]);
+        relatedPersonPIDs.push(oneRow);
+    }
+
+    graphElement = document.getElementById("graph");
     $(graphElement).html("");
-    if (relationRowIndexes.length > 0) {
+    if (relatedPersonPIDs.length > 0) {
         var relationRow = $("<tr>");
         var relationWeightRow = $("<tr>");
         relationRow.append($("<td>Related person</td>"));
         relationWeightRow.append($("<td>Relation Weight</td>"));
-        for (var i = 0; i < relationRowIndexes.length; i++) {
+        for (i = 0; i < relatedPersonPIDs.length; i++) {
             relationRow.append($("<td>" + "<img src='"
-                + images[Number(relationMatrix[relationRowIndexes[i]][1]) % images.length]
+                + images[Number(relatedPersonPIDs[i][0]) % images.length]
                 + "' width='60' height='60'><br>"
-                + relationMatrix[relationRowIndexes[i]][1] + "</td>"));
-            relationWeightRow.append($("<td>" + relationMatrix[relationRowIndexes[i]][2] + "</td>"));
+                + relatedPersonPIDs[i][0] + "</td>"));
+            relationWeightRow.append($("<td>" + relatedPersonPIDs[i][1] + "</td>"));
 
-            var relatedAllocationIndex = allocationSeatPIDCol.indexOf(relationMatrix[relationRowIndexes[i]][1]);
+            var relatedAllocationIndex = allocationSeatPIDCol.indexOf(relatedPersonPIDs[i][0]);
             var id = getId(allocationMatrix[relatedAllocationIndex][2], allocationMatrix[relatedAllocationIndex][3]);
             $("#arranged_seat_table").find("button[id='" + id + "']").addClass("related");
 
-            var relatedHistoryIndex = historySeatPIDCol.indexOf(relationMatrix[relationRowIndexes[i]][1]);
+            var relatedHistoryIndex = historySeatPIDCol.indexOf(relatedPersonPIDs[i][0]);
             id = historyMatrix[relatedHistoryIndex][2];
             $("#original_seat_table").find("button[id='" + id + "']").addClass("related");
         }
@@ -201,8 +219,8 @@ function historySeatClickHandler(e) {
 
         var relationGraph = Viva.Graph.graph();
         relationGraph.addNode(selectedPid, {url: images[Number(selectedPid) % images.length]});
-        for (var i = 0;i < relationRowIndexes.length; i++) {
-            var relatedPID = relationMatrix[relationRowIndexes[i]][1];
+        for (i = 0; i < relatedPersonPIDs.length; i++) {
+            var relatedPID = relatedPersonPIDs[i][0];
             relationGraph.addNode(relatedPID,
                 {url: images[Number(relatedPID) % images.length]});
             relationGraph.addLink(selectedPid, relatedPID);
